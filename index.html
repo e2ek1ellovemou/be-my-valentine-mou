@@ -22,11 +22,16 @@
         .slide { 
             width: 100%; 
             height: 100%; 
-            object-fit: contain; /* This keeps your photos from stretching */
+            object-fit: cover; /* This keeps your photos from stretching */
             display: none; 
             position: absolute;
             top: 0;
             left: 0;
+            background-color: white;
+    border: 12px solid white; /* The white border */
+    border-bottom: 40px solid white; /* Thick bottom for the "caption" area */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2); /* Soft shadow for depth */
+    box-sizing: border-box;
         }
         .active { display: block; animation: fade 1s; }
 
