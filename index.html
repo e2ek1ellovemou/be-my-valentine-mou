@@ -6,8 +6,11 @@
     <title>For My Valentine ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
+        /* 1. ANIMATED GRADIENT BACKGROUND */
         body { 
-            background-color: #fff0f3; 
+            background: linear-gradient(-45deg, #fff0f3, #ffccd5, #ffb3c1, #fff0f3);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             font-family: 'Arial', sans-serif; 
             display: flex; 
             justify-content: center; 
@@ -15,10 +18,19 @@
             height: 100vh; 
             margin: 0; 
             overflow: hidden; 
+            /* 2. CUSTOM HEART CURSOR */
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' style='font-size:30px;'><text y='30'>❤️</text></svg>"), auto;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         #card { 
-            background: white; 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(10px);
             padding: 30px; 
             border-radius: 30px; 
             box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2); 
@@ -65,16 +77,18 @@
             font-size: 1.1rem; 
             border: none; 
             border-radius: 50px; 
-            cursor: pointer; 
+            /* Sparkling heart cursor for buttons */
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' style='font-size:30px;'><text y='30'>💖</text></svg>"), pointer;
             font-weight: bold; 
         }
 
-        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; }
+        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; transition: transform 0.2s; }
+        #yesBtn:hover { transform: scale(1.1); }
 
         #noBtn { 
             background-color: #dee2e6; 
             color: #6c757d; 
-            position: fixed; /* Fixes the disappearing bug */
+            position: fixed; 
             transition: 0.1s; 
             z-index: 100;
         }
@@ -117,13 +131,12 @@
 
         <div id="successPage" class="hidden">
             <img style="width:200px; border-radius:15px;" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmV2OGpxMm9uenh1ZWt5bjBsZnZhcHptMzk4ZWY3dWc3OWx0d3YzcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/x28cIQSn19Tbi/giphy.gif">
-            <h1>hehehe yeyyyy!! ❤️</h1>
+            <h1>hehehe yeyyyy i knew it!! ❤️</h1>
             <p>i miss u so much my baby girl:((</p>
         </div>
     </div>
 
     <script>
-        // 1. Sassy No Button Texts
         const noTexts = [
             "Are you sure?", 
             "Really sure?", 
@@ -131,11 +144,14 @@
             "Why u hate me:(", 
             "HAHAHAHA KIDDING", 
             "Say YESSSS! ❤️",
-            "NOWWWWW"
+            "NOWWWWW",
+            "Why u still nvr say yes",
+            "This is crazy!!!!",
+            "Aint no way HAHAHAHA",
+            "U have reached the end mou LOL"
         ];
         let noCount = 0;
 
-        // 2. Floating Hearts Logic
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
@@ -148,7 +164,6 @@
         }
         setInterval(createHeart, 300);
 
-        // 3. Slideshow Logic
         let currentSlide = 0;
         const slides = document.querySelectorAll(".slide");
         function showSlides() {
@@ -160,28 +175,23 @@
         }
         if (slides.length > 0) setTimeout(showSlides, 3000);
 
-        // 4. Button Interaction Logic
         function moveButton() {
             const btn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
 
-            // Change Text
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
-            // Random Position (using fixed coordinates)
             const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
             const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
 
-            // Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = (currentSize + 5) + 'px';
             yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 2) + 'px';
         }
 
-        // 5. Success Logic
         function showSuccess() {
             document.getElementById('questionPage').classList.add('hidden');
             document.getElementById('successPage').classList.remove('hidden');
@@ -193,7 +203,6 @@
                 colors: ['#ff4d6d', '#ffffff', '#ff8fa3']
             });
 
-            // Heart explosion
             setInterval(createHeart, 50); 
         }
     </script>
