@@ -6,11 +6,31 @@
     <title>For My Valentine ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        body { background-color: #fff0f3; font-family: 'Arial', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        #card { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2); text-align: center; max-width: 400px; width: 90%; z-index: 10; position: relative; }
+        body { 
+            background-color: #fff0f3; 
+            font-family: 'Arial', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+
+        #card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 30px; 
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2); 
+            text-align: center; 
+            max-width: 400px; 
+            width: 90%; 
+            z-index: 10; 
+            position: relative;
+        }
+
         h1 { color: #ff4d6d; font-size: 1.8rem; margin-top: 15px; }
         
-        /* Slideshow Styling */
         .slideshow-container { 
             position: relative; 
             width: 100%; 
@@ -19,34 +39,55 @@
             border-radius: 15px;
             background-color: #f8f9fa;
         }
+
         .slide { 
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
             display: none; 
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
         }
-        .active { display: block; animation: fade 1s; }
 
+        .active { display: block; animation: fade 1s; }
         @keyframes fade { from {opacity: 0.4} to {opacity: 1} }
 
-        .buttons { margin-top: 25px; display: flex; justify-content: center; gap: 20px; min-height: 50px; }
-        button { padding: 12px 25px; font-size: 1.1rem; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; z-index: 20; }
-        #yesBtn { background-color: #ff4d6d; color: white; transition: 0.3s; }
-        #yesBtn:hover { transform: scale(1.1); }
-        #noBtn { background-color: #dee2e6; color: #6c757d; position: fixed; transition: 0.1s; z-index:100; }
+        .buttons { 
+            margin-top: 25px; 
+            display: flex; 
+            justify-content: center; 
+            gap: 20px; 
+            min-height: 50px; 
+        }
+
+        button { 
+            padding: 12px 25px; 
+            font-size: 1.1rem; 
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: bold; 
+        }
+
+        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; }
+
+        #noBtn { 
+            background-color: #dee2e6; 
+            color: #6c757d; 
+            position: fixed; /* Fixes the disappearing bug */
+            transition: 0.1s; 
+            z-index: 100;
+        }
+
         .hidden { display: none; }
         
-        /* Heart Animation */
         .heart {
             position: fixed;
             color: #ff4d6d;
             font-size: 20px;
             user-select: none;
             pointer-events: none;
-            z-index: 1; /* Sits behind the card */
+            z-index: 1;
             animation: floatUp 4s linear forwards;
         }
 
@@ -82,7 +123,19 @@
     </div>
 
     <script>
-        // 1. FLOATING HEARTS
+        // 1. Sassy No Button Texts
+        const noTexts = [
+            "Are you sure?", 
+            "Really sure?", 
+            "Wrong try again!", 
+            "Why u hate me:(", 
+            "HAHAHAHA KIDDING", 
+            "Say YESSSS! ❤️",
+            "NOWWWWW"
+        ];
+        let noCount = 0;
+
+        // 2. Floating Hearts Logic
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
@@ -90,60 +143,57 @@
             heart.style.left = Math.random() * 100 + 'vw';
             heart.style.fontSize = Math.random() * 20 + 10 + 'px';
             heart.style.animationDuration = Math.random() * 2 + 3 + 's';
-            
             document.body.appendChild(heart);
-            
             setTimeout(() => { heart.remove(); }, 5000);
         }
-        setInterval(createHeart, 300); // Create a heart every 300ms
+        setInterval(createHeart, 300);
 
-        // 2. SLIDESHOW
+        // 3. Slideshow Logic
         let currentSlide = 0;
         const slides = document.querySelectorAll(".slide");
-        
         function showSlides() {
+            if(slides.length === 0) return;
             slides[currentSlide].classList.remove("active");
             currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add("active");
             setTimeout(showSlides, 3000); 
         }
-        
-        // Only start if images exist
-        if (slides.length > 0) {
-            setTimeout(showSlides, 3000);
-        }
+        if (slides.length > 0) setTimeout(showSlides, 3000);
 
-        // 3. MOVE NO BUTTON & GROW YES BUTTON
+        // 4. Button Interaction Logic
         function moveButton() {
             const btn = document.getElementById('noBtn');
-            const yesBtn = document.getElementById('yesBtn'); // Fixed: defined yesBtn here
+            const yesBtn = document.getElementById('yesBtn');
 
-            // Random position logic
+            // Change Text
+            btn.innerText = noTexts[noCount % noTexts.length];
+            noCount++;
+
+            // Random Position (using fixed coordinates)
             const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
             const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
 
-            // Grow logic
+            // Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = (currentSize + 5) + 'px';
             yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 2) + 'px';
         }
 
-        // 4. SUCCESS ACTION
+        // 5. Success Logic
         function showSuccess() {
             document.getElementById('questionPage').classList.add('hidden');
             document.getElementById('successPage').classList.remove('hidden');
             
-            // Confetti
             confetti({
-                particleCount: 150,
-                spread: 70,
+                particleCount: 200,
+                spread: 100,
                 origin: { y: 0.6 },
                 colors: ['#ff4d6d', '#ffffff', '#ff8fa3']
             });
-            
-            // Explode more hearts
+
+            // Heart explosion
             setInterval(createHeart, 50); 
         }
     </script>
