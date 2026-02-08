@@ -4,70 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For My Valentine ❤️</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js">// 1. FLOATING HEARTS LOGIC (Runs on page load)
-function createHeart() {
-    const heart = document.createElement('div');
-    heart.classList.add('heart');
-    heart.innerHTML = '❤️'; 
-    heart.style.left = Math.random() * 100 + 'vw';
-    heart.style.fontSize = Math.random() * 20 + 10 + 'px';
-    heart.style.animationDuration = Math.random() * 2 + 3 + 's';
-    document.body.appendChild(heart);
-    setTimeout(() => { heart.remove(); }, 5000);
-}
-setInterval(createHeart, 300); // Hearts appear every 0.3 seconds
-
-// 2. SLIDESHOW LOGIC
-let currentSlide = 0;
-const slides = document.querySelectorAll(".slide");
-function showSlides() {
-    slides[currentSlide].classList.remove("active");
-    currentSlide = (currentSlide + 1) % slides.length;
-    slides[currentSlide].classList.add("active");
-    setTimeout(showSlides, 3000);
-}
-showSlides();
-
-// 3. GROWING YES BUTTON & MOVING NO BUTTON
-function moveButton() {
-    const btn = document.getElementById('noBtn');
-    const yesBtn = document.getElementById('yesBtn');
-    const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
-    const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
-    btn.style.left = x + 'px';
-    btn.style.top = y + 'px';
-
-    // Make Yes button grow
-    const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-    yesBtn.style.fontSize = (currentSize + 5) + 'px';
-}
-
-// 4. THE BIG SUCCESS (CONFETTI + SCREEN CHANGE)
-function showSuccess() {
-    document.getElementById('questionPage').classList.add('hidden');
-    document.getElementById('successPage').classList.remove('hidden');
-    
-    // Confetti Cannon!
-    confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#ff4d6d', '#ffffff', '#ff8fa3']
-    });
-
-    // Optional: Make hearts explode faster after "Yes"
-    setInterval(createHeart, 50); 
-}</script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         body { background-color: #fff0f3; font-family: 'Arial', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        #card { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2); text-align: center; max-width: 400px; width: 90%; z-index: 10; }
+        #card { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2); text-align: center; max-width: 400px; width: 90%; z-index: 10; position: relative; }
         h1 { color: #ff4d6d; font-size: 1.8rem; margin-top: 15px; }
         
         /* Slideshow Styling */
         .slideshow-container { 
             position: relative; 
             width: 100%; 
-            height: 300px; /* Increased height for better photo viewing */
+            height: 300px; 
             overflow: hidden; 
             border-radius: 15px;
             background-color: #f8f9fa;
@@ -75,7 +22,7 @@ function showSuccess() {
         .slide { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover; /* This keeps your photos from stretching */
+            object-fit: cover; 
             display: none; 
             position: absolute;
             top: 0;
@@ -86,31 +33,27 @@ function showSuccess() {
         @keyframes fade { from {opacity: 0.4} to {opacity: 1} }
 
         .buttons { margin-top: 25px; display: flex; justify-content: center; gap: 20px; min-height: 50px; }
-        button { padding: 12px 25px; font-size: 1.1rem; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; }
+        button { padding: 12px 25px; font-size: 1.1rem; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; z-index: 20; }
         #yesBtn { background-color: #ff4d6d; color: white; transition: 0.3s; }
         #yesBtn:hover { transform: scale(1.1); }
         #noBtn { background-color: #dee2e6; color: #6c757d; position: absolute; transition: 0.1s; }
         .hidden { display: none; }
+        
+        /* Heart Animation */
         .heart {
-    position: fixed;
-    color: #ff4d6d; /* Heart color */
-    font-size: 20px;
-    user-select: none;
-    pointer-events: none;
-    z-index: 1; /* Behind the card */
-    animation: floatUp 4s linear forwards;
-}
+            position: fixed;
+            color: #ff4d6d;
+            font-size: 20px;
+            user-select: none;
+            pointer-events: none;
+            z-index: 1; /* Sits behind the card */
+            animation: floatUp 4s linear forwards;
+        }
 
-@keyframes floatUp {
-    0% {
-        transform: translateY(100vh) rotate(0deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(-10vh) rotate(360deg);
-        opacity: 0;
-    }
-}
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -139,7 +82,22 @@ function showSuccess() {
     </div>
 
     <script>
-        // Automatic Slideshow Logic
+        // 1. FLOATING HEARTS
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️'; 
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => { heart.remove(); }, 5000);
+        }
+        setInterval(createHeart, 300); // Create a heart every 300ms
+
+        // 2. SLIDESHOW
         let currentSlide = 0;
         const slides = document.querySelectorAll(".slide");
         
@@ -147,37 +105,46 @@ function showSuccess() {
             slides[currentSlide].classList.remove("active");
             currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add("active");
-            setTimeout(showSlides, 3000); // 3 seconds per photo
+            setTimeout(showSlides, 3000); 
         }
         
-        // Start slideshow if there are multiple images
+        // Only start if images exist
         if (slides.length > 0) {
             setTimeout(showSlides, 3000);
         }
 
+        // 3. MOVE NO BUTTON & GROW YES BUTTON
         function moveButton() {
             const btn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn'); // Fixed: defined yesBtn here
+
             // Random position logic
             const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
             const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
+
+            // Grow logic
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-    yesBtn.style.fontSize = (currentSize + 5) + 'px';
-    yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 2) + 'px';
+            yesBtn.style.fontSize = (currentSize + 5) + 'px';
+            yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 2) + 'px';
         }
 
+        // 4. SUCCESS ACTION
         function showSuccess() {
             document.getElementById('questionPage').classList.add('hidden');
             document.getElementById('successPage').classList.remove('hidden');
             
-            // Full screen confetti blast
+            // Confetti
             confetti({
-                particleCount: 400,
-                spread: 100,
+                particleCount: 150,
+                spread: 70,
                 origin: { y: 0.6 },
                 colors: ['#ff4d6d', '#ffffff', '#ff8fa3']
             });
+            
+            // Explode more hearts
+            setInterval(createHeart, 50); 
         }
     </script>
 </body>
