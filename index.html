@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For My Valentine ❤️</title>
+    <title>This is for you mou ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         /* 1. ANIMATED GRADIENT BACKGROUND */
@@ -68,6 +68,7 @@
             margin-top: 25px; 
             display: flex; 
             justify-content: center; 
+            align-items: center;
             gap: 20px; 
             min-height: 50px; 
         }
@@ -77,13 +78,11 @@
             font-size: 1.1rem; 
             border: none; 
             border-radius: 50px; 
-            /* Sparkling heart cursor for buttons */
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' style='font-size:30px;'><text y='30'>💖</text></svg>"), pointer;
             font-weight: bold; 
         }
 
-        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; transition: transform 0.2s; }
-        #yesBtn:hover { transform: scale(1.1); }
+        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; transition: transform 0.2s; position: relative; }
 
         #noBtn { 
             background-color: #dee2e6; 
@@ -138,16 +137,9 @@
 
     <script>
         const noTexts = [
-            "Are you sure?", 
-            "Really sure?", 
-            "Wrong try again!", 
-            "Why u hate me:(", 
-            "HAHAHAHA KIDDING", 
-            "Say YESSSS! ❤️",
-            "NOWWWWW",
-            "Why u still nvr say yes",
-            "This is crazy!!!!",
-            "Aint no way HAHAHAHA",
+            "Are you sure?", "Really sure?", "Wrong try again!", 
+            "Why u hate me:(", "HAHAHAHA KIDDING", "Say YESSSS! ❤️",
+            "NOWWWWW", "This is crazy!!!!", "Aint no way HAHAHAHA",
             "U have reached the end mou LOL"
         ];
         let noCount = 0;
@@ -182,14 +174,22 @@
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
+            // SAFE POSITION MATH
+            const padding = 20;
+            const maxX = Math.max(0, window.innerWidth - btn.offsetWidth - padding);
+            const maxY = Math.max(0, window.innerHeight - btn.offsetHeight - padding);
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
 
+            // GROW YES BUTTON (with safety cap)
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            yesBtn.style.fontSize = (currentSize + 5) + 'px';
-            yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 2) + 'px';
+            if (currentSize < 400) {
+                yesBtn.style.fontSize = (currentSize + 5) + 'px';
+                yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 2) + 'px';
+            }
         }
 
         function showSuccess() {
