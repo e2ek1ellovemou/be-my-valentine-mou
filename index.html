@@ -56,8 +56,12 @@
         @keyframes fade { from {opacity: 0.4} to {opacity: 1} }
 
         .buttons { 
-            margin-top: 25px; display: flex; 
-            justify-content: center; align-items: center; gap: 20px; 
+            margin-top: 25px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 20px; /* This keeps them side-by-side */
+            min-height: 60px;
         }
 
         button { 
@@ -66,13 +70,15 @@
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' style='font-size:30px;'><text y='30'>💖</text></svg>"), pointer;
         }
 
-        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; }
+        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; position: relative; }
 
-        /* NO BUTTON: Fixed position to ensure it stays on screen */
+        /* NO BUTTON: Starts 'relative' to sit next to Yes, then becomes 'fixed' via JS */
         #noBtn { 
             background-color: #dee2e6; color: #6c757d; 
-            position: fixed; transition: 0.1s; z-index: 100;
-            left: 55%; top: 75%; /* Initial starting position */
+            position: relative; 
+            transition: 0.1s; 
+            z-index: 100;
+            white-space: nowrap;
         }
 
         .hidden { display: none; }
@@ -103,7 +109,8 @@
             <h1>My sweetest mouuu will you be my valentine? 🌹</h1>
             <div class="buttons">
                 <button id="yesBtn" onclick="showSuccess()">Yes!</button>
-                </div>
+                <button id="noBtn" onmouseover="moveButton()">No</button>
+            </div>
         </div>
 
         <div id="successPage" class="hidden">
@@ -112,8 +119,6 @@
             <p>i miss u so much my baby girl:((</p>
         </div>
     </div>
-
-    <button id="noBtn" onmouseover="moveButton()">No</button>
 
     <script>
         const noTexts = [
@@ -124,7 +129,6 @@
         ];
         let noCount = 0;
 
-        // 1. Floating Hearts
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
@@ -137,7 +141,6 @@
         }
         setInterval(createHeart, 300);
 
-        // 2. Slideshow
         let currentSlide = 0;
         const slides = document.querySelectorAll(".slide");
         function showSlides() {
@@ -149,39 +152,37 @@
         }
         if (slides.length > 0) setTimeout(showSlides, 3000);
 
-        // 3. Move No Button (The reinforced logic)
         function moveButton() {
             const btn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
 
+            // The moment she hovers, make it "fixed" so it can jump outside the card
+            btn.style.position = 'fixed';
+
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
-            // Calculate boundaries
             const padding = 50;
             const maxX = window.innerWidth - btn.offsetWidth - padding;
             const maxY = window.innerHeight - btn.offsetHeight - padding;
 
-            // Generate new coordinates, ensuring they are at least 0
             const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
             const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
 
             btn.style.left = randomX + 'px';
             btn.style.top = randomY + 'px';
 
-            // Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            if (currentSize < 400) { // Keep it sane but large
+            if (currentSize < 400) {
                 yesBtn.style.fontSize = (currentSize + 5) + 'px';
                 yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 2) + 'px';
             }
         }
 
-        // 4. Success Action
         function showSuccess() {
             document.getElementById('questionPage').classList.add('hidden');
             document.getElementById('successPage').classList.remove('hidden');
-            document.getElementById('noBtn').classList.add('hidden'); // Hide No button
+            document.getElementById('noBtn').style.display = 'none'; 
             
             confetti({
                 particleCount: 200, spread: 100, origin: { y: 0.6 },
