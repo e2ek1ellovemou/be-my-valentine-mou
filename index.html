@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Valentine ❤️</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            background-color: #fff0f3;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #card {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            z-index: 10;
+        }
+        h1 { color: #ff4d6d; font-size: 2rem; }
+        .gif { width: 180px; margin-bottom: 20px; border-radius: 15px; }
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        #yesBtn { background-color: #ff4d6d; color: white; }
+        #yesBtn:hover { transform: scale(1.1); }
+        #noBtn { 
+            background-color: #dee2e6; 
+            color: #6c757d; 
+            position: absolute; /* Allows it to jump around */
+            transition: 0.1s;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="card">
+        <div id="questionPage">
+            <img class="gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueGZ3bmZ3bmZ3bmZ3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/596vHtmxVUM6F89yly/giphy.gif" alt="Cute Bear">
+            <h1>Will you be my Valentine? 🌹</h1>
+            <div class="buttons">
+                <button id="yesBtn" onclick="showSuccess()">Yes!</button>
+                <button id="noBtn" onmouseover="moveButton()">No</button>
+            </div>
+        </div>
+
+        <div id="successPage" class="hidden">
+            <img class="gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueGZ3bmZ3bmZ3bmZ3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1z/MDJ9IbxxvDUQM/giphy.gif" alt="Happy Cat">
+            <h1>Yay! Best day ever! ❤️</h1>
+            <p>I can't wait to see you!</p>
+        </div>
+    </div>
+
+    <script>
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+            // Random position within the window, but keeping it away from the edges
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
+            
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+        }
+
+        function showSuccess() {
+            document.getElementById('questionPage').classList.add('hidden');
+            document.getElementById('successPage').classList.remove('hidden');
+            
+            // Confetti Blast!
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+              confetti({
+                particleCount: 3,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#ff4d6d', '#ff758f', '#ffb3c1']
+              });
+              confetti({
+                particleCount: 3,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#ff4d6d', '#ff758f', '#ffb3c1']
+              });
+
+              if (Date.now() < end) {
+                requestAnimationFrame(frame);
+              }
+            }());
+        }
+    </script>
+</body>
+</html>
