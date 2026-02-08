@@ -82,6 +82,9 @@
             
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
+            const yesBtn = document.getElementById('yesBtn');
+const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+yesBtn.style.fontSize = (currentSize * 1.2) + 'px';
         }
 
         function showSuccess() {
