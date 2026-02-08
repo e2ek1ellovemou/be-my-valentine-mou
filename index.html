@@ -22,7 +22,7 @@
         .slide { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover; /* This keeps your photos from stretching */
+            object-fit: contain; /* This keeps your photos from stretching */
             display: none; 
             position: absolute;
             top: 0;
@@ -89,6 +89,9 @@
             const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
+            const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+    yesBtn.style.fontSize = (currentSize + 5) + 'px';
+    yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 2) + 'px';
         }
 
         function showSuccess() {
