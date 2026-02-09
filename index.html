@@ -61,6 +61,13 @@
             background: white; padding: 15px; border-radius: 25px;
             box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2);
             text-align: center; width: 90%; max-width: 450px; z-index: 10;
+            display: none; /* Hidden until envelope clicked */
+        }
+
+        /* The Bloom Effect for the Card */
+        @keyframes heartBloom {
+            0% { opacity: 0; transform: scale(0.5) rotate(-5deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
         }
 
         .slideshow-container { 
@@ -144,8 +151,34 @@
         const noTexts = ["Are you sure?", "Really sure?", "Wrong try again!", "Why u hate me:(", "HAHAHAHA KIDDING", "Say YESSSS! ❤️", "NOWWWWW", "This is crazy!!!!", "Aint no way HAHAHAHA", "U have reached the end mou LOL"];
         let noCount = 0;
 
+        // --- THE HEART EXPLOSION + REVEAL ---
         function openEnvelope() {
+            // 1. Hide envelope
             document.getElementById('envelope-wrapper').classList.add('envelope-open');
+            
+            // 2. Show the card with Bloom animation
+            const card = document.getElementById('card');
+            card.style.display = 'block';
+            card.style.animation = 'heartBloom 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+
+            // 3. Trigger Heart Explosion
+            const count = 200;
+            const defaults = { origin: { y: 0.5 }, colors: ['#ff4d6d', '#ff758f', '#ffffff'] };
+
+            function fire(particleRatio, opts) {
+                confetti({
+                    ...defaults, ...opts,
+                    particleCount: Math.floor(count * particleRatio),
+                    scalar: 2,
+                    shapes: ['circle']
+                });
+            }
+
+            fire(0.25, { spread: 30, startVelocity: 60 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 1 });
+            fire(0.1, { spread: 130, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 130, startVelocity: 45 });
         }
 
         // 1. Heart Trail
@@ -200,7 +233,7 @@
             while (isOverlapping) {
                 newX = Math.random() * (window.innerWidth - btnW - 40) + 20;
                 newY = Math.random() * (window.innerHeight - btnH - 40) + 20;
-                const buffer = 70;
+                const buffer = 80;
                 const overlapYes = (
                     newX < yesRect.right + buffer &&
                     newX + btnW > yesRect.left - buffer &&
