@@ -6,14 +6,14 @@
     <title> ❤️ For mouuu ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        /* CRITICAL: Force the window to stay exactly one screen size */
+        /* LOCK SCREEN SIZE - No scrolling allowed */
         html, body {
             height: 100vh !important;
             width: 100vw !important;
             margin: 0;
             padding: 0;
-            overflow: hidden !important; /* Prevents the "No" button from jumping into scroll areas */
-            position: fixed; /* Extra insurance against scrolling */
+            overflow: hidden !important;
+            position: fixed;
         }
 
         body { 
@@ -74,13 +74,14 @@
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' style='font-size:30px;'><text y='30'>💖</text></svg>"), pointer;
         }
 
-        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; position: relative; }
+        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; position: relative; transition: all 0.2s ease; }
 
         #noBtn { 
             background-color: #dee2e6; color: #6c757d; 
             position: relative; 
-            transition: all 0.15s ease; 
-            z-index: 1000; /* Stays above the card */
+            transition: all 0.1s ease; 
+            z-index: 1000;
+            white-space: nowrap;
         }
 
         .hidden { display: none; }
@@ -113,7 +114,7 @@
                 <img class="slide" src="photo7.JPG">
             </div>
 
-            <h1>My sweetest mouu will you be my valentine?💏</h1>
+            <h1>My sweetest mouuu will you be my valentine?💏</h1>
             <div class="buttons">
                 <button id="yesBtn" onclick="showSuccess()">Yes!</button>
                 <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
@@ -196,7 +197,7 @@
         }
         if (slides.length > 0) setTimeout(showSlides, 3000);
 
-        // 5. THE ULTIMATE BOUNDED MOVE LOGIC
+        // 5. IRONCLAD BOUNDED MOVE LOGIC
         function moveButton() {
             const btn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
@@ -205,33 +206,28 @@
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
-            // Use client dimensions (strictly what is visible on screen)
-            const padding = 60;
-            const btnWidth = btn.offsetWidth;
-            const btnHeight = btn.offsetHeight;
-            
-            // maxX/Y calculation based on the actual visible window
-            const maxX = window.innerWidth - btnWidth - padding;
-            const maxY = window.innerHeight - btnHeight - padding;
+            const vh = window.innerHeight;
+            const vw = window.innerWidth;
+            const btnW = btn.offsetWidth;
+            const btnH = btn.offsetHeight;
+            const padding = 60; // Hard padding from edges
 
-            // Generate coordinates within the visible square
-            let newX = Math.floor(Math.random() * maxX) + (padding / 2);
-            let newY = Math.floor(Math.random() * maxY) + (padding / 2);
+            // Calculate new position strictly inside viewport
+            let newX = Math.random() * (vw - btnW - (padding * 2)) + padding;
+            let newY = Math.random() * (vh - btnH - (padding * 2)) + padding;
 
-            // Double check bounds to ensure it's not off-screen
-            if(newX < padding) newX = padding;
-            if(newY < padding) newY = padding;
-            if(newX > maxX) newX = maxX;
-            if(newY > maxY) newY = maxY;
+            // Clamp values (The Safety Net)
+            newX = Math.max(padding, Math.min(newX, vw - btnW - padding));
+            newY = Math.max(padding, Math.min(newY, vh - btnH - padding));
 
             btn.style.left = newX + 'px';
             btn.style.top = newY + 'px';
 
             // Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            if (currentSize < 400) { 
-                yesBtn.style.fontSize = (currentSize + 8) + 'px';
-                yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 3) + 'px';
+            if (currentSize < 300) { 
+                yesBtn.style.fontSize = (currentSize + 10) + 'px';
+                yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 4) + 'px';
             }
         }
 
