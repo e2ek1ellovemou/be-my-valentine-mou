@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For mouu ❤️</title>
+    <title> ❤️ For mouuu ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        /* 1. ANIMATED GRADIENT BACKGROUND */
         body { 
             background: linear-gradient(-45deg, #fff0f3, #ffccd5, #ffb3c1, #fff0f3);
             background-size: 400% 400%;
@@ -37,11 +36,8 @@
             max-width: 400px; 
             width: 90%; 
             z-index: 10; 
-            position: relative;
         }
 
-        h1 { color: #ff4d6d; font-size: 1.8rem; margin-top: 15px; }
-        
         .slideshow-container { 
             position: relative; width: 100%; height: 300px; 
             overflow: hidden; border-radius: 15px; background-color: #f8f9fa;
@@ -60,8 +56,8 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            gap: 20px; /* This keeps them side-by-side */
-            min-height: 60px;
+            gap: 20px; 
+            min-height: 100px;
         }
 
         button { 
@@ -72,13 +68,11 @@
 
         #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; position: relative; }
 
-        /* NO BUTTON: Starts 'relative' to sit next to Yes, then becomes 'fixed' via JS */
         #noBtn { 
             background-color: #dee2e6; color: #6c757d; 
             position: relative; 
-            transition: 0.1s; 
+            transition: all 0.1s ease; 
             z-index: 100;
-            white-space: nowrap;
         }
 
         .hidden { display: none; }
@@ -106,16 +100,16 @@
                 <img class="slide" src="photo4.JPG">
             </div>
 
-            <h1>My sweetest mouuu will you be my valentine? 🌹</h1>
+            <h1>My sweetest mouuu will you be my valentine?💏💐🌹</h1>
             <div class="buttons">
                 <button id="yesBtn" onclick="showSuccess()">Yes!</button>
-                <button id="noBtn" onmouseover="moveButton()">No</button>
+                <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
             </div>
         </div>
 
         <div id="successPage" class="hidden">
             <img style="width:200px; border-radius:15px;" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmV2OGpxMm9uenh1ZWt5bjBsZnZhcHptMzk4ZWY3dWc3OWx0d3YzcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/x28cIQSn19Tbi/giphy.gif">
-            <h1>hehehe yeyyyy i knew it!! ❤️</h1>
+            <h1>hehehehe yeyyyy i knew it!! 💋🌹❤️</h1>
             <p>i miss u so much my baby girl:((</p>
         </div>
     </div>
@@ -129,6 +123,7 @@
         ];
         let noCount = 0;
 
+        // Floating Hearts
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
@@ -141,6 +136,7 @@
         }
         setInterval(createHeart, 300);
 
+        // Slideshow
         let currentSlide = 0;
         const slides = document.querySelectorAll(".slide");
         function showSlides() {
@@ -156,26 +152,33 @@
             const btn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
 
-            // The moment she hovers, make it "fixed" so it can jump outside the card
+            // 1. Switch to fixed the first time it moves
             btn.style.position = 'fixed';
 
+            // 2. Change Text
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
-            const padding = 50;
-            const maxX = window.innerWidth - btn.offsetWidth - padding;
-            const maxY = window.innerHeight - btn.offsetHeight - padding;
+            // 3. New ultra-safe coordinate calculation
+            // We use clientWidth/Height which is the actual visible area
+            const btnWidth = btn.offsetWidth;
+            const btnHeight = btn.offsetHeight;
+            
+            const maxX = window.innerWidth - btnWidth - 50;
+            const maxY = window.innerHeight - btnHeight - 50;
 
-            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
-            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+            // Ensure coordinates are always within the 50px padding of the screen
+            const newX = Math.floor(Math.random() * maxX) + 25;
+            const newY = Math.floor(Math.random() * maxY) + 25;
 
-            btn.style.left = randomX + 'px';
-            btn.style.top = randomY + 'px';
+            btn.style.left = newX + 'px';
+            btn.style.top = newY + 'px';
 
+            // 4. Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             if (currentSize < 400) {
-                yesBtn.style.fontSize = (currentSize + 5) + 'px';
-                yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 2) + 'px';
+                yesBtn.style.fontSize = (currentSize + 7) + 'px';
+                yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 3) + 'px';
             }
         }
 
