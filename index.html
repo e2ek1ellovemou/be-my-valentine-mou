@@ -36,7 +36,10 @@
             max-width: 400px; 
             width: 90%; 
             z-index: 10; 
+            transition: transform 0.3s ease;
         }
+
+        #card:hover { transform: scale(1.01); }
 
         .slideshow-container { 
             position: relative; width: 100%; height: 300px; 
@@ -87,6 +90,8 @@
             0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
             100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
+
+        .trail { position: fixed; pointer-events: none; transition: 0.6s; z-index: 1000; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -123,7 +128,42 @@
         ];
         let noCount = 0;
 
-        // Floating Hearts
+        // 1. Mouse Heart Trail
+        document.addEventListener('mousemove', function(e) {
+            const trail = document.createElement('div');
+            trail.classList.add('trail');
+            trail.innerHTML = '❤️';
+            trail.style.left = e.clientX + 'px';
+            trail.style.top = e.clientY + 'px';
+            document.body.appendChild(trail);
+            setTimeout(() => {
+                trail.style.transform = 'translateY(-30px) scale(0)';
+                trail.style.opacity = '0';
+            }, 50);
+            setTimeout(() => { trail.remove(); }, 600);
+        });
+
+        // 2. Click Burst Effect
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'BUTTON') return;
+            for (let i = 0; i < 5; i++) {
+                const burst = document.createElement('div');
+                burst.classList.add('heart');
+                burst.innerHTML = '💖';
+                burst.style.left = e.clientX + 'px';
+                burst.style.top = e.clientY + 'px';
+                const xMove = (Math.random() - 0.5) * 200;
+                const yMove = (Math.random() - 0.5) * 200;
+                burst.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${xMove}px, ${yMove}px) scale(0)`, opacity: 0 }
+                ], { duration: 1000, easing: 'ease-out' });
+                document.body.appendChild(burst);
+                setTimeout(() => burst.remove(), 1000);
+            }
+        });
+
+        // 3. Floating Hearts
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
@@ -136,7 +176,7 @@
         }
         setInterval(createHeart, 300);
 
-        // Slideshow
+        // 4. Slideshow
         let currentSlide = 0;
         const slides = document.querySelectorAll(".slide");
         function showSlides() {
@@ -148,33 +188,26 @@
         }
         if (slides.length > 0) setTimeout(showSlides, 3000);
 
+        // 5. Reinforced Button Move
         function moveButton() {
             const btn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
 
-            // 1. Switch to fixed the first time it moves
             btn.style.position = 'fixed';
-
-            // 2. Change Text
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
-            // 3. New ultra-safe coordinate calculation
-            // We use clientWidth/Height which is the actual visible area
             const btnWidth = btn.offsetWidth;
             const btnHeight = btn.offsetHeight;
-            
             const maxX = window.innerWidth - btnWidth - 50;
             const maxY = window.innerHeight - btnHeight - 50;
 
-            // Ensure coordinates are always within the 50px padding of the screen
-            const newX = Math.floor(Math.random() * maxX) + 25;
-            const newY = Math.floor(Math.random() * maxY) + 25;
+            const newX = Math.max(25, Math.floor(Math.random() * maxX));
+            const newY = Math.max(25, Math.floor(Math.random() * maxY));
 
             btn.style.left = newX + 'px';
             btn.style.top = newY + 'px';
 
-            // 4. Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             if (currentSize < 400) {
                 yesBtn.style.fontSize = (currentSize + 7) + 'px';
@@ -182,16 +215,12 @@
             }
         }
 
+        // 6. Success Action
         function showSuccess() {
             document.getElementById('questionPage').classList.add('hidden');
             document.getElementById('successPage').classList.remove('hidden');
             document.getElementById('noBtn').style.display = 'none'; 
-            
-            confetti({
-                particleCount: 200, spread: 100, origin: { y: 0.6 },
-                colors: ['#ff4d6d', '#ffffff', '#ff8fa3']
-            });
-
+            confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffffff', '#ff8fa3'] });
             setInterval(createHeart, 50); 
         }
     </script>
