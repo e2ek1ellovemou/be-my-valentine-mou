@@ -13,6 +13,50 @@
             justify-content: center; align-items: center; touch-action: none;
         }
 
+        /* --- ENVELOPE STYLES --- */
+        #envelope-wrapper {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100svh;
+            background: #fff0f3;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 5000;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        .envelope {
+            position: relative;
+            width: 150px; height: 100px;
+            background: #ff8fa3; border-radius: 0 0 10px 10px;
+            cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .envelope .flap {
+            position: absolute; top: 0; width: 0; height: 0;
+            border-left: 75px solid transparent; border-right: 75px solid transparent;
+            border-top: 60px solid #ff4d6d; border-radius: 10px 10px 0 0;
+            transform-origin: top; transition: transform 0.4s ease;
+        }
+
+        .envelope .body {
+            position: absolute; width: 100%; height: 100%;
+            background: #ff758f; border-radius: 0 0 10px 10px;
+            clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%);
+        }
+
+        .envelope .letter {
+            position: absolute; top: 10px; left: 50%;
+            transform: translateX(-50%); font-size: 30px;
+            transition: transform 0.4s ease;
+        }
+
+        .envelope:hover .flap { transform: rotateX(180deg); }
+        .envelope:hover .letter { transform: translate(-50%, -30px); }
+
+        .envelope-open { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        /* --- MAIN CARD STYLES --- */
         #card {
             background: white; padding: 15px; border-radius: 25px;
             box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2);
@@ -39,7 +83,6 @@
 
         #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; position: relative; }
 
-        /* Starts relative (beside Yes), then script changes it to fixed */
         #noBtn {
             background-color: #dee2e6; color: #6c757d;
             position: relative; z-index: 1000;
@@ -49,7 +92,7 @@
         .hidden { display: none; }
         h1 { font-size: 1.3rem; color: #ff4d6d; margin: 10px 0; }
         
-        /* EFFECTS */
+        /* --- EFFECTS STYLES --- */
         .heart { position: fixed; bottom: -20px; color: #ff4d6d; pointer-events: none; z-index: 1; animation: floatUp linear forwards; }
         @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-110vh); opacity: 0; } }
         
@@ -60,6 +103,15 @@
     </style>
 </head>
 <body>
+
+    <div id="envelope-wrapper">
+        <div class="envelope" onclick="openEnvelope()">
+            <div class="flap"></div>
+            <div class="body"></div>
+            <div class="letter">❤️</div>
+        </div>
+        <p style="color: #ff4d6d; font-weight: bold; margin-top: 20px;">You have a letter from mouuu...</p>
+    </div>
 
     <div id="card">
         <div id="questionPage">
@@ -92,7 +144,11 @@
         const noTexts = ["Are you sure?", "Really sure?", "Wrong try again!", "Why u hate me:(", "HAHAHAHA KIDDING", "Say YESSSS! ❤️", "NOWWWWW", "This is crazy!!!!", "Aint no way HAHAHAHA", "U have reached the end mou LOL"];
         let noCount = 0;
 
-        // 1. Mouse Heart Trail (RESTORED)
+        function openEnvelope() {
+            document.getElementById('envelope-wrapper').classList.add('envelope-open');
+        }
+
+        // 1. Heart Trail
         document.addEventListener('mousemove', function(e) {
             const trail = document.createElement('div');
             trail.classList.add('trail');
@@ -107,9 +163,9 @@
             setTimeout(() => { trail.remove(); }, 600);
         });
 
-        // 2. Click Burst Effect
+        // 2. Click Burst
         document.addEventListener('click', function(e) {
-            if (e.target.tagName === 'BUTTON') return;
+            if (e.target.tagName === 'BUTTON' || e.target.closest('.envelope')) return;
             for (let i = 0; i < 5; i++) {
                 const burst = document.createElement('div');
                 burst.style.position = 'fixed'; burst.style.zIndex = '1000';
@@ -126,14 +182,11 @@
             }
         });
 
-        // 3. Move Button Logic
+        // 3. Move No Button (The Screen-Wide Chase)
         function moveButton() {
             const btn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
-            
-            // Switch to fixed position so it can leave the white area
             btn.style.position = 'fixed';
-            
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
@@ -147,18 +200,15 @@
             while (isOverlapping) {
                 newX = Math.random() * (window.innerWidth - btnW - 40) + 20;
                 newY = Math.random() * (window.innerHeight - btnH - 40) + 20;
-
-                const buffer = 60;
+                const buffer = 70;
                 const overlapYes = (
                     newX < yesRect.right + buffer &&
                     newX + btnW > yesRect.left - buffer &&
                     newY < yesRect.bottom + buffer &&
                     newY + btnH > yesRect.top - buffer
                 );
-
                 if (!overlapYes) isOverlapping = false;
             }
-
             btn.style.left = newX + 'px';
             btn.style.top = newY + 'px';
 
@@ -168,8 +218,8 @@
             }
         }
 
-        // 4. Floating Hearts
-        function createHeart() {
+        // 4. Background Hearts
+        setInterval(() => {
             const heart = document.createElement('div');
             heart.classList.add('heart');
             heart.innerHTML = '❤️'; 
@@ -177,8 +227,7 @@
             heart.style.animationDuration = Math.random() * 3 + 2 + 's';
             document.body.appendChild(heart);
             setTimeout(() => { heart.remove(); }, 5000);
-        }
-        setInterval(createHeart, 400);
+        }, 400);
 
         // 5. Slideshow
         let currentSlide = 0;
@@ -192,11 +241,12 @@
         }
         if (slides.length > 0) setTimeout(showSlides, 3000);
 
+        // 6. Success
         function showSuccess() {
             document.getElementById('questionPage').classList.add('hidden');
             document.getElementById('successPage').classList.remove('hidden');
             document.getElementById('noBtn').style.display = 'none'; 
-            confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
+            confetti({ particleCount: 350, spread: 100, origin: { y: 0.6 } });
         }
     </script>
 </body>
