@@ -74,7 +74,7 @@
         #noBtn { 
             background-color: #dee2e6; color: #6c757d; 
             position: relative; 
-            transition: all 0.1s ease; 
+            transition: all 0.15s ease; 
             z-index: 100;
         }
 
@@ -191,29 +191,40 @@
         }
         if (slides.length > 0) setTimeout(showSlides, 3000);
 
-        // 5. Reinforced Button Move
+        // 5. THE ULTIMATE MOVE LOGIC
         function moveButton() {
             const btn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
 
+            // Force fixed immediately to break out of card constraints
             btn.style.position = 'fixed';
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
+            // Measure window and button precisely
+            const padding = 50;
             const btnWidth = btn.offsetWidth;
             const btnHeight = btn.offsetHeight;
-            const maxX = window.innerWidth - btnWidth - 50;
-            const maxY = window.innerHeight - btnHeight - 50;
+            
+            // Available space logic
+            const maxX = window.innerWidth - btnWidth - padding;
+            const maxY = window.innerHeight - btnHeight - padding;
 
-            const newX = Math.max(25, Math.floor(Math.random() * maxX));
-            const newY = Math.max(25, Math.floor(Math.random() * maxY));
+            // Safe Random Positioning
+            let newX = Math.floor(Math.random() * maxX);
+            let newY = Math.floor(Math.random() * maxY);
+
+            // Ensure it's not starting at 0,0 (too close to edges)
+            newX = Math.max(padding, newX);
+            newY = Math.max(padding, newY);
 
             btn.style.left = newX + 'px';
             btn.style.top = newY + 'px';
 
+            // Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            if (currentSize < 400) {
-                yesBtn.style.fontSize = (currentSize + 7) + 'px';
+            if (currentSize < 450) { // Slightly increased cap
+                yesBtn.style.fontSize = (currentSize + 8) + 'px';
                 yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 3) + 'px';
             }
         }
