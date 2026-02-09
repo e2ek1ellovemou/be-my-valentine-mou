@@ -2,10 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title> ❤️ For mouuu ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
+        /* CRITICAL: Force the window to stay exactly one screen size */
+        html, body {
+            height: 100vh !important;
+            width: 100vw !important;
+            margin: 0;
+            padding: 0;
+            overflow: hidden !important; /* Prevents the "No" button from jumping into scroll areas */
+            position: fixed; /* Extra insurance against scrolling */
+        }
+
         body { 
             background: linear-gradient(-45deg, #fff0f3, #ffccd5, #ffb3c1, #fff0f3);
             background-size: 400% 400%;
@@ -14,9 +24,6 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            overflow: hidden; 
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' style='font-size:30px;'><text y='30'>❤️</text></svg>"), auto;
         }
 
@@ -34,12 +41,10 @@
             box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2); 
             text-align: center; 
             max-width: 400px; 
-            width: 90%; 
+            width: 85%; 
             z-index: 10; 
             transition: transform 0.3s ease;
         }
-
-        #card:hover { transform: scale(1.01); }
 
         .slideshow-container { 
             position: relative; width: 100%; height: 300px; 
@@ -75,7 +80,7 @@
             background-color: #dee2e6; color: #6c757d; 
             position: relative; 
             transition: all 0.15s ease; 
-            z-index: 100;
+            z-index: 1000; /* Stays above the card */
         }
 
         .hidden { display: none; }
@@ -172,7 +177,7 @@
             heart.classList.add('heart');
             heart.innerHTML = '❤️'; 
             heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.fontSize = Math.random() * 20 + 'px';
             heart.style.animationDuration = Math.random() * 2 + 3 + 's';
             document.body.appendChild(heart);
             setTimeout(() => { heart.remove(); }, 5000);
@@ -191,39 +196,40 @@
         }
         if (slides.length > 0) setTimeout(showSlides, 3000);
 
-        // 5. THE ULTIMATE MOVE LOGIC
+        // 5. THE ULTIMATE BOUNDED MOVE LOGIC
         function moveButton() {
             const btn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
 
-            // Force fixed immediately to break out of card constraints
             btn.style.position = 'fixed';
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
-            // Measure window and button precisely
-            const padding = 50;
+            // Use client dimensions (strictly what is visible on screen)
+            const padding = 60;
             const btnWidth = btn.offsetWidth;
             const btnHeight = btn.offsetHeight;
             
-            // Available space logic
+            // maxX/Y calculation based on the actual visible window
             const maxX = window.innerWidth - btnWidth - padding;
             const maxY = window.innerHeight - btnHeight - padding;
 
-            // Safe Random Positioning
-            let newX = Math.floor(Math.random() * maxX);
-            let newY = Math.floor(Math.random() * maxY);
+            // Generate coordinates within the visible square
+            let newX = Math.floor(Math.random() * maxX) + (padding / 2);
+            let newY = Math.floor(Math.random() * maxY) + (padding / 2);
 
-            // Ensure it's not starting at 0,0 (too close to edges)
-            newX = Math.max(padding, newX);
-            newY = Math.max(padding, newY);
+            // Double check bounds to ensure it's not off-screen
+            if(newX < padding) newX = padding;
+            if(newY < padding) newY = padding;
+            if(newX > maxX) newX = maxX;
+            if(newY > maxY) newY = maxY;
 
             btn.style.left = newX + 'px';
             btn.style.top = newY + 'px';
 
             // Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            if (currentSize < 450) { // Slightly increased cap
+            if (currentSize < 400) { 
                 yesBtn.style.fontSize = (currentSize + 8) + 'px';
                 yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 3) + 'px';
             }
