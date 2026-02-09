@@ -6,25 +6,21 @@
     <title> ❤️ For mouuu ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        /* THE FIX: Use svh/svw to ignore the mobile address bar */
+        /* Force the page to stay still */
         html, body {
-            height: 100svh !important;
-            width: 100svw !important;
+            height: 100svh;
+            width: 100vw;
             margin: 0;
             padding: 0;
-            overflow: hidden !important;
-            position: fixed;
-            touch-action: none; /* Prevents accidental zooming/scrolling */
-        }
-
-        body { 
+            overflow: hidden;
             background: linear-gradient(-45deg, #fff0f3, #ffccd5, #ffb3c1, #fff0f3);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
-            font-family: 'Arial', sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
         }
 
         @keyframes gradientBG {
@@ -33,57 +29,64 @@
             100% { background-position: 0% 50%; }
         }
 
-        #card { 
-            background: rgba(255, 255, 255, 0.9); 
+        #card {
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            padding: 20px; 
-            border-radius: 30px; 
-            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2); 
-            text-align: center; 
-            max-width: 350px; 
-            width: 80%; 
-            z-index: 10; 
+            padding: 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.3);
+            text-align: center;
+            width: 85%;
+            max-width: 400px;
+            z-index: 10;
+        }
+
+        /* THE CAGE: The 'No' button cannot leave this area */
+        .buttons-wrap {
+            position: relative;
+            width: 100%;
+            height: 280px; /* Limits the vertical flight path */
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: visible;
+        }
+
+        button {
+            padding: 12px 28px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            z-index: 20;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        #noBtn {
+            background-color: #dee2e6;
+            color: #6c757d;
+            position: absolute; /* Relative to .buttons-wrap */
+            z-index: 15;
+            transition: left 0.15s ease-out, top 0.15s ease-out;
+            white-space: nowrap;
         }
 
         .slideshow-container { 
             position: relative; width: 100%; height: 250px; 
-            overflow: hidden; border-radius: 15px; background-color: #f8f9fa;
+            overflow: hidden; border-radius: 15px; background: #eee;
         }
-
-        .slide { 
-            width: 100%; height: 100%; object-fit: cover; 
-            display: none; position: absolute; top: 0; left: 0;
-        }
-
+        .slide { width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; top: 0; left: 0;}
         .active { display: block; }
-
-        .buttons { 
-            margin-top: 20px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 15px; 
-            min-height: 80px;
-        }
-
-        button { 
-            padding: 12px 25px; font-size: 1rem; border: none; 
-            border-radius: 50px; font-weight: bold; transition: 0.1s;
-        }
-
-        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; position: relative; }
-
-        #noBtn { 
-            background-color: #dee2e6; color: #6c757d; 
-            position: fixed; /* Fixed relative to viewport */
-            z-index: 1000;
-        }
-
         .hidden { display: none; }
-        
-        .heart {
-            position: fixed; color: #ff4d6d; pointer-events: none; z-index: 1;
-        }
+        h1 { font-size: 1.4rem; color: #ff4d6d; margin: 15px 0; }
     </style>
 </head>
 <body>
@@ -100,64 +103,64 @@
                 <img class="slide" src="photo7.JPG">
             </div>
 
-            <h2 style="font-size: 1.3rem;">My sweetest mouu will you be my valentine?💏</h2>
-            <div class="buttons">
+            <h1>Will you be my valentine?💏</h1>
+            
+            <div class="buttons-wrap" id="cage">
                 <button id="yesBtn" onclick="showSuccess()">Yes!</button>
                 <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
             </div>
         </div>
 
         <div id="successPage" class="hidden">
-            <img style="width:200px; border-radius:10px;" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmV2OGpxMm9uenh1ZWt5bjBsZnZhcHptMzk4ZWY3dWc3OWx0d3YzcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/x28cIQSn19Tbi/giphy.gif">
-            <h1>hehehehe yeyyyy i knew it!! 💋🌹❤️</h1>
-            <p>i miss u so much my baby girl:((</p>
+            <img style="width:220px; border-radius:15px;" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmV2OGpxMm9uenh1ZWt5bjBsZnZhcHptMzk4ZWY3dWc3OWx0d3YzcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/x28cIQSn19Tbi/giphy.gif">
+            <h1 style="font-size: 2rem;">Hehehe yeyyy! ❤️🌹</h1>
+            <p>I miss you so much my baby girl! :(</p>
         </div>
     </div>
 
     <script>
-        const noTexts = ["Are you sure?", "Really?", "Wrong!", "Say YES! ❤️", "Catch me!", "Nope!"];
         let noCount = 0;
+        const noTexts = ["Sure?", "Really?", "Try again!", "Wrong one!", "Nope!", "Haha click Yes!"];
 
-        // Simplified Movement Logic
         function moveButton() {
             const btn = document.getElementById('noBtn');
+            const cage = document.getElementById('cage');
             const yesBtn = document.getElementById('yesBtn');
 
+            // 1. Swap text
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
-            // Use the actual VISIBLE window size
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-            
-            // Define a "Safe Box" that is 20% away from every edge
-            const marginX = vw * 0.2;
-            const marginY = vh * 0.2;
-            
-            const minX = marginX;
-            const maxX = vw - marginX - btn.offsetWidth;
-            const minY = marginY;
-            const maxY = vh - marginY - btn.offsetHeight;
+            // 2. Calculate bounds of the "Cage"
+            const cageW = cage.offsetWidth;
+            const cageH = cage.offsetHeight;
+            const btnW = btn.offsetWidth;
+            const btnH = btn.offsetHeight;
 
-            // Generate random spot inside the Safe Box
-            const randomX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
-            const randomY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+            // 3. Stay 10px away from the cage walls
+            const maxX = cageW - btnW - 10;
+            const maxY = cageH - btnH - 10;
 
-            btn.style.left = randomX + 'px';
-            btn.style.top = randomY + 'px';
+            const newX = Math.max(10, Math.floor(Math.random() * maxX));
+            const newY = Math.max(10, Math.floor(Math.random() * maxY));
 
-            // Grow Yes Button (Max cap at 80% screen width)
+            // 4. Move inside cage
+            btn.style.left = newX + 'px';
+            btn.style.top = newY + 'px';
+
+            // 5. Grow Yes Button (cap it at 200px wide to keep layout clean)
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            if (currentSize < (vw * 0.4)) { 
+            if (currentSize < 80) { 
                 yesBtn.style.fontSize = (currentSize + 5) + 'px';
                 yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).padding) + 2) + 'px';
             }
         }
 
-        // Slideshow logic
+        // Slideshow
         let currentSlide = 0;
         const slides = document.querySelectorAll(".slide");
         function showSlides() {
+            if(slides.length < 2) return;
             slides[currentSlide].classList.remove("active");
             currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add("active");
@@ -169,7 +172,12 @@
             document.getElementById('questionPage').classList.add('hidden');
             document.getElementById('successPage').classList.remove('hidden');
             document.getElementById('noBtn').style.display = 'none'; 
-            confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+            confetti({
+                particleCount: 200,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffffff', '#ff8fa3']
+            });
         }
     </script>
 </body>
