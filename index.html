@@ -14,54 +14,36 @@
         }
 
         #card {
-            background: white; 
-            padding: 15px; /* Minimal padding */
-            border-radius: 25px;
+            background: white; padding: 15px; border-radius: 25px;
             box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2);
-            text-align: center; 
-            width: 90%; 
-            max-width: 450px; /* Wider card */
-            z-index: 10;
+            text-align: center; width: 90%; max-width: 450px; z-index: 10;
         }
 
-        /* BIGGER PHOTOS */
         .slideshow-container { 
-            position: relative; 
-            width: 100%; 
-            height: 380px; /* Increased height significantly */
-            overflow: hidden; 
-            border-radius: 15px; 
-            background: #eee;
+            position: relative; width: 100%; height: 380px; 
+            overflow: hidden; border-radius: 15px; background: #eee;
         }
         .slide { width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; top: 0; left: 0;}
         .active { display: block; }
 
         .buttons-area {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            min-height: 50px; /* Reduced gap */
+            margin-top: 15px; display: flex;
+            justify-content: center; align-items: center;
+            gap: 15px; min-height: 60px;
         }
 
         button {
-            padding: 12px 28px; font-size: 1.1rem; border: none;
+            padding: 12px 25px; font-size: 1.1rem; border: none;
             border-radius: 50px; font-weight: bold; cursor: pointer;
         }
 
-        #yesBtn {
-            background-color: #ff4d6d; color: white; z-index: 20;
-            position: relative; transition: all 0.2s ease;
-        }
+        #yesBtn { background-color: #ff4d6d; color: white; z-index: 20; position: relative; }
 
-        /* NO BUTTON - Now moves across the WHOLE screen */
+        /* Starts relative (beside Yes), then script changes it to fixed */
         #noBtn {
             background-color: #dee2e6; color: #6c757d;
-            position: fixed; /* Fixed to the whole screen */
-            z-index: 1000;
-            transition: all 0.15s ease-out;
-            white-space: nowrap;
+            position: relative; z-index: 1000;
+            transition: all 0.15s ease-out; white-space: nowrap;
         }
 
         .hidden { display: none; }
@@ -70,6 +52,11 @@
         /* EFFECTS */
         .heart { position: fixed; bottom: -20px; color: #ff4d6d; pointer-events: none; z-index: 1; animation: floatUp linear forwards; }
         @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-110vh); opacity: 0; } }
+        
+        .trail {
+            position: fixed; pointer-events: none; transition: 0.6s;
+            z-index: 1000; font-size: 12px; user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -96,7 +83,7 @@
 
         <div id="successPage" class="hidden">
             <img style="width:250px; border-radius:15px;" src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmV2OGpxMm9uenh1ZWt5bjBsZnZhcHptMzk4ZWY3dWc3OWx0d3YzcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/x28cIQSn19Tbi/giphy.gif">
-            <h1>hehehehe yeyyyy i knew it!! 💋🌹</h1>
+            <h1>hehehehe yeyyyy i knew it!! 💋🌹❤️💐🌹</h1>
             <p>i miss u so much my baby girl:((</p>
         </div>
     </div>
@@ -105,29 +92,63 @@
         const noTexts = ["Are you sure?", "Really sure?", "Wrong try again!", "Why u hate me:(", "HAHAHAHA KIDDING", "Say YESSSS! ❤️", "NOWWWWW", "This is crazy!!!!", "Aint no way HAHAHAHA", "U have reached the end mou LOL"];
         let noCount = 0;
 
+        // 1. Mouse Heart Trail (RESTORED)
+        document.addEventListener('mousemove', function(e) {
+            const trail = document.createElement('div');
+            trail.classList.add('trail');
+            trail.innerHTML = '❤️';
+            trail.style.left = e.clientX + 'px';
+            trail.style.top = e.clientY + 'px';
+            document.body.appendChild(trail);
+            setTimeout(() => {
+                trail.style.transform = 'translateY(-30px) scale(0)';
+                trail.style.opacity = '0';
+            }, 50);
+            setTimeout(() => { trail.remove(); }, 600);
+        });
+
+        // 2. Click Burst Effect
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'BUTTON') return;
+            for (let i = 0; i < 5; i++) {
+                const burst = document.createElement('div');
+                burst.style.position = 'fixed'; burst.style.zIndex = '1000';
+                burst.innerHTML = '💖';
+                burst.style.left = e.clientX + 'px'; burst.style.top = e.clientY + 'px';
+                const xMove = (Math.random() - 0.5) * 200;
+                const yMove = (Math.random() - 0.5) * 200;
+                burst.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: `translate(${xMove}px, ${yMove}px) scale(0)`, opacity: 0 }
+                ], { duration: 1000, easing: 'ease-out' });
+                document.body.appendChild(burst);
+                setTimeout(() => burst.remove(), 1000);
+            }
+        });
+
+        // 3. Move Button Logic
         function moveButton() {
             const btn = document.getElementById('noBtn');
             const yesBtn = document.getElementById('yesBtn');
+            
+            // Switch to fixed position so it can leave the white area
+            btn.style.position = 'fixed';
             
             btn.innerText = noTexts[noCount % noTexts.length];
             noCount++;
 
             const btnW = btn.offsetWidth;
             const btnH = btn.offsetHeight;
-
-            // Get the Yes Button's location to avoid it
             const yesRect = yesBtn.getBoundingClientRect();
 
             let newX, newY;
             let isOverlapping = true;
 
-            // Loop until we find a spot that is NOT behind the Yes button or Card
             while (isOverlapping) {
                 newX = Math.random() * (window.innerWidth - btnW - 40) + 20;
                 newY = Math.random() * (window.innerHeight - btnH - 40) + 20;
 
-                // Check if the random spot overlaps with the Yes button area
-                const buffer = 50; // Safety distance from Yes button
+                const buffer = 60;
                 const overlapYes = (
                     newX < yesRect.right + buffer &&
                     newX + btnW > yesRect.left - buffer &&
@@ -141,14 +162,13 @@
             btn.style.left = newX + 'px';
             btn.style.top = newY + 'px';
 
-            // Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            if (currentSize < 150) { 
-                yesBtn.style.fontSize = (currentSize + 6) + 'px';
+            if (currentSize < 120) { 
+                yesBtn.style.fontSize = (currentSize + 5) + 'px';
             }
         }
 
-        // Floating Hearts
+        // 4. Floating Hearts
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
@@ -160,7 +180,7 @@
         }
         setInterval(createHeart, 400);
 
-        // Slideshow
+        // 5. Slideshow
         let currentSlide = 0;
         const slides = document.querySelectorAll(".slide");
         function showSlides() {
@@ -176,7 +196,7 @@
             document.getElementById('questionPage').classList.add('hidden');
             document.getElementById('successPage').classList.remove('hidden');
             document.getElementById('noBtn').style.display = 'none'; 
-            confetti({ particleCount: 250, spread: 80, origin: { y: 0.6 } });
+            confetti({ particleCount: 300, spread: 100, origin: { y: 0.6 } });
         }
     </script>
 </body>
